@@ -88,6 +88,11 @@
                 </div>
             </div>
         </div>
+
     </section>
 @endsection
+
+@yield('scripts')
+
+
 
