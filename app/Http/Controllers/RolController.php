@@ -60,7 +60,7 @@ class RolController extends Controller
 
         $role->syncPermissions($request->get('permission'));
                   
-        return redirect()->route('roles.edit',array('role'=>$role->id))->with('message', 'Registro creado correctamente!!!');
+        return redirect()->route('roles.index')->with('success', 'Registro creado correctamente.');
     }
 
     /**
@@ -113,7 +113,7 @@ class RolController extends Controller
          $role->save();
          $role->syncPermissions($request->get('permission'));
          
-        return redirect()->route('roles.edit',array('role'=>$id))->with('message', 'Registro actualizado correctamente!!!');
+        return redirect()->route('roles.index')->with('success', 'Registro actualizado correctamente.');
     }
 
     /**
@@ -127,6 +127,6 @@ class RolController extends Controller
         $roles = Role::find($id);
         $roles->delete();
         
-        return redirect()->route('roles.index')->with('message', 'Registro eliminado correctamente!!!');
+        return redirect()->route('roles.index')->with('success', 'Registro eliminado correctamente.');
     }
 }

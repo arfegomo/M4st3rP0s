@@ -23,8 +23,8 @@ class PermisoController extends Controller
      */
     public function index()
     {
-        $permissions = Permission::paginate(10);
-        return view('permisos.index',compact('permissions'));
+        $permisos = Permission::paginate(10);
+        return view('permisos.index',compact('permisos'));
     }
 
     /**
@@ -35,7 +35,8 @@ class PermisoController extends Controller
     public function create()
     {
         
-        return view('permisos.crear');
+        $role = Role::get();
+        return view('permisos.crear',compact('role'));
     }
 
     /**
@@ -56,8 +57,10 @@ class PermisoController extends Controller
                 'name' => $request->get('name'),
                 'guard_name' => $request->get('guard_name')
             ]);
+        
+        $permission->syncRoles($request->get('role'));
                   
-        return redirect()->route('permisos.edit',array('permiso'=>$permission->id))->with('message', 'Registro creado correctamente!!!');
+        return redirect()->route('permisos.index')->with('success', 'Registro creado correctamente.');
     }
 
     /**
@@ -79,10 +82,14 @@ class PermisoController extends Controller
      */
     public function edit($id)
     {
-        $permission = Permission::find($id);
+        $permiso = Permission::find($id);
+        $role = Role::get();
+        $rolePermissions = DB::table('role_has_permissions')->where('role_has_permissions.permission_id',$id)
+            ->pluck('role_has_permissions.role_id','role_has_permissions.role_id')
+            ->all();
         
 
-        return view('permisos.editar', compact('permission'));
+        return view('permisos.editar', compact('permiso','role','rolePermissions'));
     }
 
     /**
@@ -105,9 +112,10 @@ class PermisoController extends Controller
 
          
          $permission->save();
+         $permission->syncRoles($request->get('role'));
          
          
-        return redirect()->route('permisos.edit',array('permiso'=>$id))->with('message', 'Registro actualizado correctamente!!!');
+        return redirect()->route('permisos.index')->with('success', 'Registro actualizado correctamente.');
     }
 
     /**
@@ -121,6 +129,6 @@ class PermisoController extends Controller
         $permisos = Permission::find($id);
         $permisos->delete();
         
-        return redirect()->route('permisos.index');
+        return redirect()->route('permisos.index')->with('success', 'Registro eliminado correctamente.');
     }
 }

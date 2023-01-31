@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <section class="section">
+<section class="section">
         <div class="section-header">
             <h3 class="page__heading">Usuarios</h3>
         </div>
@@ -11,7 +11,7 @@
                     <div class="card">
                         <div class="card-body">
 
-				@if ($errors->any())
+                        @if ($errors->any())
                     <div class="alert alert-dark alert-dimissible fade show" role="alert">
                         <span>
                             @foreach ($errors->all() as $error)
@@ -35,7 +35,8 @@
                     </div>
                 @endif
                         @can('crear-usuario')
-						<div align="right"><a href="{{ route('users.create') }}" class="btn btn-primary">Nuevo usuario</a></div>
+						<div align="right"><a href="{{ route('users.create') }}" class="btn btn-secondary btn-lg active"><i class="fas fa-plus-circle fa-2x"></i></a></div>
+                        
 						@endcan
 
 <hr>
@@ -45,10 +46,10 @@
    <th style='color:#fff;'>Nombre</th>
    <th style='color:#fff;'>Email</th>
    <th style='color:#fff;'>Rol</th>
-   <th style='color:#fff;' colspan="2">Acciones</th>
+   <th style='color:#fff;'>Acciones</th>
    </tr>
 </thead>
-<tbody>
+
 	<tr>
 @foreach($users as $user)
 	
@@ -59,26 +60,26 @@
 		{{ $role->name }}
 	@endforeach
 	</td>
-	<td>
-	@can('editar-usuario')
-	<a href="{{ route('users.edit',$user->id) }}">
-	<i class="fa fa-trash" aria-hidden="true"></i>
-	</a>
-	@endcan
-	</td>
-	<td>
-	@can('borrar-usuario')
+    <td>
+    <div class="btn-group" role="group">
+    @can('editar-usuario')
+    <a class="btn btn-primary" href="{{ route('users.edit',$user->id) }}">
+    <i class="fas fa-pencil-alt"></i></a> 
+    @endcan 
+    @can('borrar-usuario')
 	{!! Form::open(['route' => ['users.destroy',$user->id]]) !!}
 		<input type="hidden" name="_method" value="DELETE">
-		<button onclick="return confirm('Eliminar ?')">
-		<i class="fa fa-trash" aria-hidden="true"></i>
-		</button>
+        <button class="btn btn-danger" onclick="return confirm('Eliminar ?')">
+        <i class="fas fa-trash-alt"></i>
+        </button>
 	{!! Form::close() !!}
-	@endcan
-	</td>
+	@endcan  
+         
+	</div>
+    </td>
 	</tr>
 @endforeach
-</tbody>	
+	
 </table>
 <div class="pagination justify-content-end">
 	{!! $users->links() !!}
@@ -88,11 +89,16 @@
                 </div>
             </div>
         </div>
-
+    
     </section>
+@yield('scripts')
+
+
 @endsection
 
-@yield('scripts')
+
+
+
 
 
 

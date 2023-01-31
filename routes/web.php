@@ -25,6 +25,7 @@ Route::group(['middleware' => ['auth']], function(){
 	Route::resource('roles', RolController::class);
 	Route::resource('users', UserController::class);
 	Route::resource('permisos', PermisoController::class);
+	Route::resource('socios', SocioNegocioController::class);
 });
 
 

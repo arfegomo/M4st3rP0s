@@ -3,7 +3,7 @@
 @section('content')
     <section class="section">
         <div class="section-header">
-            <h3 class="page__heading">Roles</h3>
+            <h3 class="page__heading">Permisos</h3>
         </div>
         <div class="section-body">
             <div class="row">
@@ -34,7 +34,7 @@
                     </div>
                 @endif
                         @can('crear-rol')
-                            <div align="right"><a href="{{ route('roles.create') }}" class="btn btn-secondary btn-lg active"><i class="fas fa-plus-circle fa-2x"></i></a></div>
+                            <div align="right"><a href="{{ route('permisos.create') }}" class="btn btn-secondary btn-lg active"><i class="fas fa-plus-circle fa-2x"></i></a></div>
                         @endcan
 
 <hr>
@@ -42,26 +42,26 @@
 <thead style='background-color: #6777ef;'>
             
    <tr>
-   <th style='color:#fff;'>Rol</th>
-   <th style='color:#fff;'>Usuarios</th>
-   <th style='color:#fff;' colspan="2">Acciones</th>
+   <th style='color:#fff;'>Permiso</th>
+   <th style='color:#fff;'>Roles</th>
+   <th style='color:#fff;'>Acciones</th>
    </tr>
 </thead>
 	<tr>
-@foreach($roles as $rol)
-	<td>{{ $rol->name }}</td>
-	<td>@foreach($rol->users as $user)
-		<i data-feather="check-square" class="align-text-bottom"></i> {{ $user->name }} <br>
+@foreach($permisos as $permiso)
+	<td>{{ $permiso->name }}</td>
+	<td>@foreach($permiso->roles as $rol)
+		<i data-feather="check-square" class="align-text-bottom"></i> {{ $rol->name }} <br>
 		@endforeach
 	</td>
     <td>
     <div class="btn-group" role="group">
-    @can('editar-rol')
-    <a class="btn btn-primary" href="{{ route('roles.edit',$rol->id) }}">
+    @can('editar-permiso')
+    <a class="btn btn-primary" href="{{ route('permisos.edit',$permiso->id) }}">
     <i class="fas fa-pencil-alt"></i></a> 
     @endcan 
-    @can('borrar-rol')
-	{!! Form::open(['route' => ['roles.destroy',$rol->id]]) !!}
+    @can('borrar-permiso')
+	{!! Form::open(['route' => ['permisos.destroy',$permiso->id]]) !!}
 		<input type="hidden" name="_method" value="DELETE">
         <!--<button class="btn btn-danger" onclick="fireSweetAlert()">-->
         <button class="btn btn-danger" onclick="return confirm('Eliminar ?')">
@@ -76,7 +76,7 @@
 	
 </table>
 <div class="pagination justify-content-end">
-	{!! $roles->links() !!}
+	{!! $permisos->links() !!}
 </div>
                         </div>
                     </div>

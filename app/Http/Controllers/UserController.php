@@ -72,7 +72,7 @@ class UserController extends Controller
 
          $user->assignRole($request->get('roles'));
 
-        return redirect()->route('users.edit',array('user'=>$user->id))->with('success', 'Registro creado correctamente!!!');
+        return redirect()->route('users.index')->with('success', 'Registro creado correctamente.');
     }
 
     /**
@@ -121,6 +121,7 @@ class UserController extends Controller
 
          $users = User::find($id);  
          $users->name = $request->get('name');
+         $users->email = $request->get('email');
 
 
          if($request->get('password') != null){
@@ -141,7 +142,9 @@ class UserController extends Controller
          // Le asignamos el rol
         $users->assignRole($request->get('roles'));
          
-        return redirect()->route('users.edit',array('user'=>$id))->with('success', 'Registro actualizado correctamente!!!');
+        //return redirect()->route('users.edit',array('user'=>$id))->with('success', 'Registro actualizado correctamente!!!');
+        return redirect()->route('users.index')->with('success', 'Registro modificado correctamente.');
+
     }
 
     /**
@@ -155,6 +158,6 @@ class UserController extends Controller
         $users = User::find($id);
         $users->delete();
         
-        return redirect()->route('users.index')->with('success', 'Registro eliminado correctamente!!!');
+        return redirect()->route('users.index')->with('success', 'Registro eliminado correctamente.');
     }
 }
