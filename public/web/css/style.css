@@ -1459,7 +1459,7 @@ table tr:hover .table-links {
 }
 
 .page-item.active .page-link {
-    background-color: #6777ef;
+    background-color: #e6e7f0;
     border-color: #6777ef;
 }
 
@@ -1478,7 +1478,7 @@ table tr:hover .table-links {
 
 .page-link:hover {
     background-color: #6777ef;
-    color: #fff;
+    color: #0c0c0c;
     border-color: transparent;
 }
 
@@ -3229,7 +3229,7 @@ pre {
 /* 4.2 Section */
 .section {
     position: relative;
-    z-index: 1;
+    /*z-index: 1;*/
 }
 
 .section > *:first-child {

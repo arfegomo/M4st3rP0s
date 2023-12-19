@@ -94,9 +94,18 @@
                         </div>
 
                         <div class="form-group row">
-                        <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Rol') }}</label>
+                            <label for="roles" class="col-md-4 col-form-label text-md-right">{{ __('Roles') }}</label>
                             <div class="col-md-6">
-                                  {!! Form::select('roles[]', $roles, $userRole, ['class' => 'form-control']) !!}
+                            </br>
+                            @foreach($role as $value)
+                                
+                                <label>
+                                    {!! Form::checkbox('role[]',$value->id, in_array($value->id, $roleUsers) ? true : false, array('class' => 'name')) !!}
+                                    {{ $value->name }}
+                                </label>                               
+                                </br>       
+                                
+                            @endforeach                                  
                             </div>
                         </div>
 
@@ -116,4 +125,4 @@
         </div>
         
     </section>
-@endsection
+@endsection    

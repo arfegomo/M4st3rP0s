@@ -11,16 +11,19 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 
 use App\SocioNegocio;
+use App\TipoDocumento;
+use App\Ciudad;
+use Exception;
 
 class SocioNegocioController extends Controller
 {
 
     public function __construct()
     {
-        $this->middleware('permission:ver-socio|crear-socio|editar-socio|borrar-socio',['only'=>['index']]);
-        $this->middleware('permission:crear-socio',['only'=>['create','store']]);
-        $this->middleware('permission:editar-socio',['only'=>['edit','update']]);
-        $this->middleware('permission:borrar-socio',['only'=>['destroy']]);
+        $this->middleware('permission:ver-socionegocio|crear-socionegocio|editar-socionegocio|borrar-socionegocio',['only'=>['index']]);
+        $this->middleware('permission:crear-socionegocio',['only'=>['create','store']]);
+        $this->middleware('permission:editar-socionegocio',['only'=>['edit','update']]);
+        $this->middleware('permission:borrar-socionegocio',['only'=>['destroy']]);
     }
 
     public function index()
@@ -31,23 +34,14 @@ class SocioNegocioController extends Controller
         return view('socios.index',compact('socios'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        
-        return view('socios.crear',compact('roles'));
+        $tiposDocumentos = TipoDocumento::pluck("nombre","id")->all();
+        $ciudades = Ciudad::pluck("nombre","id")->all();
+
+        return view('socios.crear',compact('tiposDocumentos','ciudades'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
          $this->validate($request, [
@@ -55,7 +49,10 @@ class SocioNegocioController extends Controller
             'apellidos' => ['required', 'string', 'max:255'],
             'documento' => ['required', 'string', 'max:11', 'unique:socio_negocios'],
             'direccion' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:socio_negocios']            
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:socio_negocios'],
+            'ciudad' => ['required'],
+            'tipodocumento' => ['required'],
+            'tiposocio' => ['required'],          
         ]);
 
          $socio = SocioNegocio::create([
@@ -63,50 +60,34 @@ class SocioNegocioController extends Controller
                 'apellidos' => $request->get('apellidos'),
                 'documento' => $request->get('documento'),
                 'direccion' => $request->get('direccion'),
-                'email' => $request->get('email')
+                'email' => $request->get('email'),
+                'ciudad_id' => $request->get('ciudad'),
+                'tipo_documento_id' => $request->get('tipodocumento'),
+                'tiposocio' => $request->get('tiposocio'),
             ]);
 
         return redirect()->route('socios.index')->with('success', 'Registro creado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        $socios = SocioNegocio::find($id);
+        $socio = SocioNegocio::find($id);
+        $tiposDocumentos = TipoDocumento::pluck('nombre','id')->all();
+        $ciudades = Ciudad::pluck('nombre','id')->all();
     
-        return view('socios.editar',compact('socios'));
+        return view('socios.editar',compact('socio','tiposDocumentos','ciudades'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         $this->validate($request, [
             'nombres' => ['required', 'string', 'max:255'],
             'apellidos' => ['required', 'string', 'max:255'],
             'direccion' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', Rule::unique('socio_negocios')->ignore($id)],            
+            'email' => ['required', 'email', Rule::unique('socio_negocios')->ignore($id)],
+            'ciudad_id' => ['required'],
+            'tipo_documento_id' => ['required'],
+            'tiposocio' => ['required']
         ]);
 
          $socios = SocioNegocio::find($id);  
@@ -114,24 +95,30 @@ class SocioNegocioController extends Controller
          $socios->apellidos = $request->get('apellidos');
          $socios->direccion = $request->get('direccion');
          $socios->email = $request->get('email');
+         $socios->ciudad_id = $request->get('ciudad_id');
+         $socios->tipo_documento_id = $request->get('tipo_documento_id');
+         $socios->tiposocio = $request->get('tiposocio');
 
-        $socios->save();         
+         $socios->save();         
          
         return redirect()->route('socios.index')->with('success', 'Registro modificado correctamente.');
 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        $socios = SocioNegocio::find($id);
-        $socios->delete();
+        try {
+            
+            $socios = SocioNegocio::find($id);
+            $socios->delete();
         
-        return redirect()->route('socios.index')->with('success', 'Registro eliminado correctamente.');
+            return redirect()->route('socios.index')->with('success', 'Registro eliminado correctamente.');
+
+        } catch (\Throwable $th) {
+            
+            return redirect()->route('socios.index')->with('success', 'El registro no pudo ser eliminado.');
+
+        }
+
     }
 }

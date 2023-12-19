@@ -3,7 +3,7 @@
 @section('content')
     <section class="section">
         <div class="section-header">
-            <h3 class="page__heading">Editar socio</h3>
+            <h3 class="page__heading">Editar socio de negocio</h3>
         </div>
         <div class="section-body">
             <div class="row">
@@ -33,8 +33,8 @@
                         {{ session()->get('message') }}
                     </div>
                 @endif
-                {!! Form::model($socios, ['route' => ['socios.update', $socios->id],'method'=>'PUT']) !!}
-                        
+                    
+                    {!! Form::model($socio, ['route' => ['socios.update', $socio->id],'method'=>'PUT']) !!}                        
 
                         <div class="form-group row">
                             <label for="nombres" class="col-md-4 col-form-label text-md-right">{{ __('Nombres') }}</label>
@@ -60,7 +60,7 @@
                                 {!! Form::text('apellidos',null,array(
                                     'class'=>'form-control',
                                     'required'=>'required',
-                                    'placeholder'=>'Apellido'
+                                    'placeholder'=>'Apellidos'
                                 )) !!}
                                 @error('apellidos')
                                     <span class="invalid-feedback" role="alert">
@@ -71,14 +71,30 @@
                         </div>
 
                         <div class="form-group row">
+                            <label for="tiposocio" class="col-md-4 col-form-label text-md-right">{{ __('Tipo de socio') }}</label>
+                                <div class="col-md-6">
+                                      <select name="tiposocio" class="form-control">
+                                        
+                                        @if($socio->tiposocio == 1)
+                                            <option value="1" selected>Cliente</option>
+                                            <option value="2">Proveedor</option>
+                                        @elseif($socio->tiposocio == 2)
+                                            <option value="2" selected>Proveedor</option>
+                                            <option value="1">Cliente</option>
+                                        @endif
+                                        
+                                      </select>
+                                </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label for="documento" class="col-md-4 col-form-label text-md-right">{{ __('Documento') }}</label>
 
                             <div class="col-md-6">
                                 {!! Form::text('documento',null,array(
                                     'class'=>'form-control',
                                     'required'=>'required',
-                                    'placeholder'=>'Documento',
-                                    'readonly' => 'readonly'
+                                    'placeholder'=>'Documento'
                                 )) !!}
                                 @error('documento')
                                     <span class="invalid-feedback" role="alert">
@@ -86,6 +102,13 @@
                                     </span>
                                 @enderror
                             </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="tipodocumento" class="col-md-4 col-form-label text-md-right">{{ __('Tipo de documento') }}</label>
+                                <div class="col-md-6">
+                                      {!! Form::select('tipo_documento_id', $tiposDocumentos ,null, ['class' => 'form-control']) !!}
+                                </div>
                         </div>
 
                         <div class="form-group row">
@@ -103,6 +126,13 @@
                                     </span>
                                 @enderror
                             </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="ciudad" class="col-md-4 col-form-label text-md-right">{{ __('Ciudad') }}</label>
+                                <div class="col-md-6">
+                                      {!! Form::select('ciudad_id', $ciudades ,null, ['class' => 'form-control']) !!}
+                                </div>
                         </div>
 
                         <div class="form-group row">

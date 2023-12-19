@@ -17,34 +17,19 @@ class RolController extends Controller
         $this->middleware('permission:editar-rol',['only'=>['edit','update']]);
         $this->middleware('permission:borrar-rol',['only'=>['destroy']]);
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        $roles = Role::paginate(10);
+        $roles = Role::all();
         return view('roles.index',compact('roles'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $permission = Permission::get();
         return view('roles.crear',compact('permission'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
    {
         $this->validate($request,[
@@ -63,23 +48,6 @@ class RolController extends Controller
         return redirect()->route('roles.index')->with('success', 'Registro creado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $role = Role::find($id);
@@ -91,13 +59,6 @@ class RolController extends Controller
         return view('roles.editar', compact('role', 'permission', 'rolePermissions'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         $this->validate($request,[
@@ -105,10 +66,8 @@ class RolController extends Controller
         
     ]);
 
-
          $role = Role::find($id);  
          $role->name = $request->get('name');
-
          
          $role->save();
          $role->syncPermissions($request->get('permission'));
@@ -116,17 +75,19 @@ class RolController extends Controller
         return redirect()->route('roles.index')->with('success', 'Registro actualizado correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        $roles = Role::find($id);
-        $roles->delete();
-        
-        return redirect()->route('roles.index')->with('success', 'Registro eliminado correctamente.');
+        try {
+
+            $roles = Role::find($id);
+            $roles->delete();
+            
+            return redirect()->route('roles.index')->with('success', 'Registro eliminado correctamente.');
+
+        } catch (\Throwable $th) {
+            
+            return redirect()->route('roles.index')->with('success', 'El registro no pudo ser eliminado.');
+
+        }
     }
 }
