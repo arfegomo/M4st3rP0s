@@ -3,6 +3,7 @@
 @section('css')
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
 @endsection
 
 @section('content')
@@ -78,8 +79,11 @@
                                 @endphp
 
                                     @if($value == 1)
+                                    @php
+                                        $total = \Illuminate\Support\Facades\DB::table('temporaries')->where('mesa_id', $mesa->id)->selectRaw('SUM(preciounitario * cantidad) as total')->first();
+                                    @endphp
 
-                                    <div class="col-lg-2">
+                                    <div class="col-lg-2" style="padding-top: 20px">
 
                                         <form method="POST" action="{{ route('facturacion.close') }}">
 
@@ -91,9 +95,19 @@
                                                     $consecutivo = \Illuminate\Support\Facades\DB::table('temporaries')->where('mesa_id', $mesa->id)->value('consecutivo_id')
                                                 @endphp 
 
-                                                <div class="col-lg-2">
+                                                <div class="col-lg-12 draggable ui-widget-content">
 
-                                                    <button type="submit" class="btn btn-danger btn-lg active btn-block" role="button" aria-pressed="true"><b>Mesa: {{ $mesa->id }} </b><br><img alt="image" src="{{ asset('img/mesa.png') }}"><br><span>{{ $mesa->responsable }}</span></button><hr>
+                                                    <div class="draggable ui-widget-content cursor-wait" id="{{ $mesa->id }}">
+                                                        <div><i class="fa-solid fa-2x fa-sack-dollar"></i><strong><span style="padding-left: 5px; text-transform: uppercase; font-size: 22px">${{ number_format($total->total,0,',') }}</span></strong></div>
+                                                        <div>Cliente: <span style="text-transform: uppercase"><strong>{{ $mesa->responsable }}</span></strong></div>
+
+                                                        <div class="col-lg-2">
+                                                    
+                                                            <button type="submit" class="btn btn-danger btn-lg active btn-block" role="button" aria-pressed="true"><b>Mesa: {{ $mesa->id }} </b><br><img alt="image" src="{{ asset('img/mesa.png') }}"></button><hr>
+
+                                                        </div>
+
+                                                    </div>
 
                                                 </div>
 
@@ -103,18 +117,24 @@
 
                                     </div>
 
-                                            @else
+                                    @else
 
-                                        <div class="col-lg-2">
-    
-                                                    <div class="col-lg-2">
-    
-                                                        <button type="button" data-id="{{ $mesa->id }}" id="openModal" class="btn btn-linght btn-lg active btn-block" role="button" aria-pressed="true"><b>Mesa: {{ $mesa->id }} </b><br><img alt="image" src="{{ asset('img/mesa.png') }}"><br><span>{{ $mesa->responsable }}</span></button>
-    
-                                                    </div>
-    
+                                    <div class="col-lg-2" style="padding-top: 20px">
+
+                                        <div class="droppable ui-widget-content" id="{{ $mesa->id }}">
+                                            <div><i class="fa-regular fa-2x fa-folder-open"></i></div>
+                                            <div>Libre</div>
+
+                                            <div class="col-lg-12">
+
+                                                <button type="button" data-id="{{ $mesa->id }}" id="openModal" class="btn btn-linght btn-lg active btn-block" role="button" aria-pressed="true"><b>Mesa: {{ $mesa->id }} </b><br><img alt="image" src="{{ asset('img/mesa.png') }}"></button>
+
+                                            </div>
 
                                         </div>
+
+
+                                    </div>
 
                                     @endif
 
@@ -123,7 +143,6 @@
                             @endforeach                            
 
                         </div>
-
                             </div>
                         </div>
                     </div>
@@ -146,7 +165,7 @@
                 
                     <div class="modal-body">
 
-                        <form action="{{ route('mesa.updateMesa') }}" method="POST">
+                        <form action="{{ route('mesa.update-mesa') }}" method="POST">
 
                             @csrf
                             @method('PUT')
@@ -192,20 +211,96 @@
         <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
         <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
+
 
         <script>
-        
-        //Llamar modal
-        $(document).on('click','#openModal',function(e){
 
+        $(document).ready(function(){
+            //Llamar modal
+            $(document).on('click','#openModal',function(e){
             idMesa = $(this).attr("data-id");
-
             $("#mesa-id").val(idMesa);
-
             $('#exampleModal').modal('show'); //abrir
+            });    
+            //Fin llamado modal
 
-        });    
-        //Fin llamado modal
+            $(".draggable").draggable({ 
+                cursor: "move", cursorAt: { top: 56, left: 56 },
+                start: function(event, ui) {
+                    initialPosition = ui.position
+                },
+                stop: function(event, ui) {
+                    var idDelDivDraggable = $(this).attr("id");
+                } 
+            });
+            $(".droppable").droppable({
+                drop: function(event, ui){
+                    var idDelDivDroppable = $(this).attr("id");
+                    var draggableId = ui.draggable.attr("id");
+                    var $draggable = ui.draggable;
+                    Swal.fire({
+                    title: "¡Advertencia!",
+                    text: `¿Confirma es traslado de la cuenta a la mesa # ${idDelDivDroppable}?`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Confirmar",
+                    cancelButtonText: "Cancelar"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            srcTraslado = "{{ route('mesa.trasladar-mesa') }}";
+                            $.ajax({
+                                url: srcTraslado,
+                                method: 'PUT',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                data: { origen: ui.draggable.attr('id'), destino: idDelDivDroppable }, // Envía el valor del botón arrastrado
+                                success: function(response) {
+                                    if(response.data == 'success'){
+                                        Swal.fire({
+                                            title: "¡Mesa trasladada!",
+                                            text: "",
+                                            icon: "success",
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                        setTimeout(() => {
+                                            location.reload();
+                                        }, 2000);
+                                    }else{
+                                        Swal.fire({
+                                            title: "¡Error!",
+                                            text: "¡Ops, algo salió mal!",
+                                            icon: "error",
+                                            showConfirmButton: false,
+                                timer: 1500
+                                        });
+                                        setTimeout(() => {
+                                            location.reload();
+                                        }, 2000);
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    // Manejar errores
+                                    console.error(error);
+                                }
+                            });
+                        }else{
+                            //location.reload();
+                            $draggable.animate({
+                                top:0, left:0
+                            }, 500);
+                        }
+                    });
+                    //alert(`trasladar mesa ${ui.draggable.attr('id')} a la mesa ${idDelDivDroppable}`);
+                }
+            });
+
+        })
 
         </script>   
     

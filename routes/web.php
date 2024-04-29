@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth']], function(){
 	Route::get('receta/createProduct', 'RecetaController@createProduct')->name('receta.createProduct');
 	Route::post('receta/addProduct', 'RecetaController@addProduct')->name('receta.addProduct');
 	Route::get('inventario/kardex/{producto}', 'InventarioController@kardex')->name('inventario.kardex');
+	Route::get('inventario/all-kardex', 'InventarioController@updateInventario')->name('inventario.all-kardex');
 
 	Route::get('facturacion/mesas','FacturacionController@mesas')->name('facturacion.mesas');
 	Route::post('facturacion-mesas','FacturacionController@indexMesas')->name('facturacion.index-mesas');
@@ -58,7 +59,8 @@ Route::group(['middleware' => ['auth']], function(){
 	Route::get('informe/load', 'InformeController@load')->name('informe.load');
 	Route::post('informe/fiscal', 'InformeController@fiscal')->name('informe.fiscal');
 
-	Route::put('mesa', 'MesaController@updateMesa')->name('mesa.updateMesa');
+	Route::put('faturacion', 'MesaController@updateMesa')->name('mesa.update-mesa');
+	Route::put('facturacion', 'MesaController@trasladarMesa')->name('mesa.trasladar-mesa');
 	
 });
 

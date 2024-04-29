@@ -23,6 +23,7 @@
                         
                         <input id="datepickerstart" width="276" />
                         <input id="datepickerend" width="276" /> 
+                        <!--<input type="button" id="consulta" value="Consultar"/>-->
                             
                     </div> 
 
@@ -353,163 +354,316 @@
 
                 onSelectTime:function(){
 
-                fechastart = $('#datepickerstart').val();
-                fechaend = $('#datepickerend').val();
+                    fechastart = $('#datepickerstart').val();
+                    fechaend = $('#datepickerend').val();
 
-                srcFiscal = "{{ route('informe.fiscal') }}";
+                    srcFiscal = "{{ route('informe.fiscal') }}";
 
-                $.ajax({            
-                    url: srcFiscal,
-                    type: 'POST',
-                    dataType: "json",
-                    data: {
-                        fechastart:fechastart, fechaend:fechaend 
-                    },
+                    $.ajax({            
+                        url: srcFiscal,
+                        type: 'POST',
+                        dataType: "json",
+                        data: {
+                            fechastart:fechastart, fechaend:fechaend 
+                        },
 
-                    success:function(data){
+                        success:function(data){
 
-                        //console.log(data.ventas);
+                            //console.log(data.ventas);
 
-                        var valorVentas = '';
+                            var valorVentas = '';
 
-                        var FormaPagos = '';
+                            var FormaPagos = '';
 
-                        var valorCompras = '';
+                            var valorCompras = '';
 
-                        var valorDevolucionesVentas = '';
+                            var valorDevolucionesVentas = '';
 
-                        var resumen = '';
+                            var resumen = '';
 
-                        var totalVentas = 0;
+                            var totalVentas = 0;
 
-                        var totalDevolucionesVentas = 0;
+                            var totalDevolucionesVentas = 0;
 
-                        var totalCompras = 0;
+                            var totalCompras = 0;
 
-                    data.ventas.forEach(element => {
+                        data.ventas.forEach(element => {
 
-                        totalVentas = totalVentas + element.total;
+                            totalVentas = totalVentas + element.total;
 
-                        valorVentas += `<tr>
-                                    
-                                    <td>${element.nombre}</td>
-                                    <td>${element.cantidad}</td>
-                                    <td>${element.total}</td>
-                                    
-                                </tr>`;
-
-                    });
-                    
-                    valorVentas += `<tr>
+                            valorVentas += `<tr>
                                         
-                            <td>TOTAL</td>
-                            <td></td>
-                            <td>${totalVentas}</td>
-                            
-                        </tr>`;
+                                        <td>${element.nombre}</td>
+                                        <td>${element.cantidad}</td>
+                                        <td>${element.total}</td>
+                                        
+                                    </tr>`;
 
-                    $("#tbodyVentas").html(valorVentas);
-
-                    data.compras.forEach(element => {
-
-                        totalCompras = totalCompras + element.total;
-
-                        valorCompras += `<tr>
-                                    
-                                    <td>${element.nombre}</td>
-                                    <td>${element.cantidad}</td>
-                                    <td>${element.total}</td>
-                                    
-                                </tr>`;
-
-                    });
-
-                    valorCompras += `<tr>
-                                
+                        });
+                        
+                        valorVentas += `<tr>
+                                            
                                 <td>TOTAL</td>
                                 <td></td>
-                                <td>${totalCompras}</td>
+                                <td>${totalVentas}</td>
                                 
                             </tr>`;
 
-                    $("#tbodyCompras").html(valorCompras);
+                        $("#tbodyVentas").html(valorVentas);
 
-                    data.devolucionesVentas.forEach(element => {
+                        data.compras.forEach(element => {
 
-                        totalDevolucionesVentas = totalDevolucionesVentas + element.total;
+                            totalCompras = totalCompras + element.total;
 
-                        valorDevolucionesVentas += `<tr>
+                            valorCompras += `<tr>
+                                        
+                                        <td>${element.nombre}</td>
+                                        <td>${element.cantidad}</td>
+                                        <td>${element.total}</td>
+                                        
+                                    </tr>`;
+
+                        });
+
+                        valorCompras += `<tr>
                                     
-                                    <td>${element.nombre}</td>
-                                    <td>${element.cantidad}</td>
-                                    <td>${element.total}</td>
+                                    <td>TOTAL</td>
+                                    <td></td>
+                                    <td>${totalCompras}</td>
                                     
                                 </tr>`;
 
-                    });
+                        $("#tbodyCompras").html(valorCompras);
 
-                    valorDevolucionesVentas += `<tr>
-                            
-                            <td>TOTAL</td>
-                            <td></td>
-                            <td>${totalDevolucionesVentas}</td>
-                            
-                        </tr>`;
-                
-                    $("#tbodyDevolucionesVentas").html(valorDevolucionesVentas);
+                        data.devolucionesVentas.forEach(element => {
 
-                            resumen += `<tr>
+                            totalDevolucionesVentas = totalDevolucionesVentas + element.total;
+
+                            valorDevolucionesVentas += `<tr>
                                         
-                                        <td>Ventas</td>
-                                        <td>${totalVentas}</td>
+                                        <td>${element.nombre}</td>
+                                        <td>${element.cantidad}</td>
+                                        <td>${element.total}</td>
                                         
                                     </tr>`;
 
-                            resumen += `<tr>
+                        });
+
+                        valorDevolucionesVentas += `<tr>
                                 
-                                        <td>Devoluciones Ventas</td>
-                                        <td>${totalDevolucionesVentas}</td>
-                                        
-                                    </tr>`;
-
-                            resumen += `<tr>
+                                <td>TOTAL</td>
+                                <td></td>
+                                <td>${totalDevolucionesVentas}</td>
                                 
-                                        <td>Compras</td>
-                                        <td>${totalCompras}</td>
-                                        
-                                    </tr>`;
+                            </tr>`;
+                    
+                        $("#tbodyDevolucionesVentas").html(valorDevolucionesVentas);
 
-                            $("#tbodyResumen").html(resumen);
+                                resumen += `<tr>
+                                            
+                                            <td>Ventas</td>
+                                            <td>${totalVentas}</td>
+                                            
+                                        </tr>`;
 
-                    var totalFormasPago = 0;
+                                resumen += `<tr>
+                                    
+                                            <td>Devoluciones Ventas</td>
+                                            <td>${totalDevolucionesVentas}</td>
+                                            
+                                        </tr>`;
 
-                    data.forma_pagos.forEach(element => {
+                                resumen += `<tr>
+                                    
+                                            <td>Compras</td>
+                                            <td>${totalCompras}</td>
+                                            
+                                        </tr>`;
 
-                        totalFormasPago = totalFormasPago + element.valor;
+                                $("#tbodyResumen").html(resumen);
+
+                        var totalFormasPago = 0;
+
+                        data.forma_pagos.forEach(element => {
+
+                            totalFormasPago = totalFormasPago + element.valor;
+
+                            FormaPagos += `<tr>
+                                            
+                                            <td>${element.forma_pago}</td>
+                                            <td>${element.valor}</td>
+                                            
+                                        </tr>`;
+
+                        });
 
                         FormaPagos += `<tr>
-                                        
-                                        <td>${element.forma_pago}</td>
-                                        <td>${element.valor}</td>
-                                        
-                                    </tr>`;
+                                            
+                                            <td>TOTAL</td>
+                                            <td>${totalFormasPago}</td>
+                                            
+                                        </tr>`;
+
+                        $("#tbodyFormaPagos").html(FormaPagos);
+
+                        }
 
                     });
 
-                    FormaPagos += `<tr>
+                }
+            });
+
+            $('#consulta').on('click', function(){
+                srcFiscal = "{{ route('informe.fiscal') }}";
+
+                $.ajax({            
+                        url: srcFiscal,
+                        type: 'POST',
+                        dataType: "json",
+                        data: {
+                            fechastart:fechastart, fechaend:fechaend 
+                        },
+
+                        success:function(data){
+
+                            var valorVentas = '';
+
+                            var FormaPagos = '';
+
+                            var valorCompras = '';
+
+                            var valorDevolucionesVentas = '';
+
+                            var resumen = '';
+
+                            var totalVentas = 0;
+
+                            var totalDevolucionesVentas = 0;
+
+                            var totalCompras = 0;
+
+                        data.ventas.forEach(element => {
+
+                            totalVentas = totalVentas + element.total;
+
+                            valorVentas += `<tr>
                                         
-                                        <td>TOTAL</td>
-                                        <td>${totalFormasPago}</td>
+                                        <td>${element.nombre}</td>
+                                        <td>${element.cantidad}</td>
+                                        <td>${element.total}</td>
                                         
                                     </tr>`;
 
-                    $("#tbodyFormaPagos").html(FormaPagos);
+                        });
+                        
+                        valorVentas += `<tr>
+                                            
+                                <td>TOTAL</td>
+                                <td></td>
+                                <td>${totalVentas}</td>
+                                
+                            </tr>`;
 
-                    }
+                        $("#tbodyVentas").html(valorVentas);
 
-                });
+                        data.compras.forEach(element => {
 
-                }
+                            totalCompras = totalCompras + element.total;
+
+                            valorCompras += `<tr>
+                                        
+                                        <td>${element.nombre}</td>
+                                        <td>${element.cantidad}</td>
+                                        <td>${element.total}</td>
+                                        
+                                    </tr>`;
+
+                        });
+
+                        valorCompras += `<tr>
+                                    
+                                    <td>TOTAL</td>
+                                    <td></td>
+                                    <td>${totalCompras}</td>
+                                    
+                                </tr>`;
+
+                        $("#tbodyCompras").html(valorCompras);
+
+                        data.devolucionesVentas.forEach(element => {
+
+                            totalDevolucionesVentas = totalDevolucionesVentas + element.total;
+
+                            valorDevolucionesVentas += `<tr>
+                                        
+                                        <td>${element.nombre}</td>
+                                        <td>${element.cantidad}</td>
+                                        <td>${element.total}</td>
+                                        
+                                    </tr>`;
+
+                        });
+
+                        valorDevolucionesVentas += `<tr>
+                                
+                                <td>TOTAL</td>
+                                <td></td>
+                                <td>${totalDevolucionesVentas}</td>
+                                
+                            </tr>`;
+                    
+                        $("#tbodyDevolucionesVentas").html(valorDevolucionesVentas);
+
+                                resumen += `<tr>
+                                            
+                                            <td>Ventas</td>
+                                            <td>${totalVentas}</td>
+                                            
+                                        </tr>`;
+
+                                resumen += `<tr>
+                                    
+                                            <td>Devoluciones Ventas</td>
+                                            <td>${totalDevolucionesVentas}</td>
+                                            
+                                        </tr>`;
+
+                                resumen += `<tr>
+                                    
+                                            <td>Compras</td>
+                                            <td>${totalCompras}</td>
+                                            
+                                        </tr>`;
+
+                                $("#tbodyResumen").html(resumen);
+
+                        var totalFormasPago = 0;
+
+                        data.forma_pagos.forEach(element => {
+
+                            totalFormasPago = totalFormasPago + element.valor;
+
+                            FormaPagos += `<tr>
+                                            
+                                            <td>${element.forma_pago}</td>
+                                            <td>${element.valor}</td>
+                                            
+                                        </tr>`;
+
+                        });
+
+                        FormaPagos += `<tr>
+                                            
+                                            <td>TOTAL</td>
+                                            <td>${totalFormasPago}</td>
+                                            
+                                        </tr>`;
+
+                        $("#tbodyFormaPagos").html(FormaPagos);
+
+                        }
+
+                    });
             });
         </script>        
     

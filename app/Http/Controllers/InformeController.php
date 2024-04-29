@@ -19,7 +19,7 @@ class InformeController extends Controller
 
         try {
             
-            $ventas = DB::table('productos')
+            $ventas =  DB::table('productos')
                         ->join('detail_transactions','productos.id','=','detail_transactions.producto_id')
                         ->join('transactions','detail_transactions.transaction_id','=','transactions.id')
                         ->join('conceptos','transactions.concepto_id','=','conceptos.id')

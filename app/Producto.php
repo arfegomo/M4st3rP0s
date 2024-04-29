@@ -32,7 +32,7 @@ class Producto extends Model
 
         return $this->belongsToMany('App\Transaction', 'detail_transactions')
                         ->with('concepto')
-                        ->withPivot('cantidad','costoventa','costopromedio','descuento','preciounitario');
+                        ->withPivot('cantidad','costoventa','costopromedio','descuento','preciounitario','created_at');
         
     }
 
